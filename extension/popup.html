@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      width: 300px;
+      padding: 16px;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f2fcf5;
+      color: #0c271b;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #c3eed0;
+    }
+    .title {
+      font-weight: bold;
+      font-size: 16px;
+      color: #1e5638;
+    }
+    .stat-card {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      margin-bottom: 12px;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #36a869;
+    }
+    .sites-list {
+      font-size: 12px;
+    }
+    .site-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px dashed #e5e7eb;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 8px;
+      background: #36a869;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-top: 16px;
+    }
+    .btn:hover {
+      background: #268852;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span>🌱</span>
+    <span class="title">Eco-Cognition Shield</span>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-label">Total Carbon Footprint</div>
+    <div class="stat-value" id="total-co2">0g</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-label">Active Sites Today</div>
+    <div class="sites-list" id="sites-list">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <a href="http://localhost:5173" target="_blank" class="btn">Open Dashboard</a>
+
+  <script src="popup.js"></script>
+</body>
+</html>

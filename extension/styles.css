@@ -1,0 +1,118 @@
+#eco-cognition-overlay {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999999;
+    font-family: 'Inter', sans-serif;
+}
+
+.eco-meter {
+    background: white;
+    padding: 10px 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #e1f8e8;
+    transition: all 0.3s ease;
+}
+
+.eco-icon {
+    font-size: 20px;
+}
+
+.eco-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.eco-label {
+    font-size: 10px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.eco-value {
+    font-size: 14px;
+    font-weight: bold;
+    color: #36a869;
+}
+
+/* States */
+#eco-cognition-overlay.warning .eco-meter {
+    border-color: #fcd34d;
+    background: #fffbeb;
+}
+
+#eco-cognition-overlay.warning .eco-value {
+    color: #d97706;
+}
+
+#eco-cognition-overlay.critical .eco-meter {
+    border-color: #fca5a5;
+    background: #fef2f2;
+    animation: pulse 2s infinite;
+}
+
+#eco-cognition-overlay.critical .eco-value {
+    color: #dc2626;
+}
+
+/* Modal */
+#eco-intervention-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 9999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.eco-modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.eco-modal-content h2 {
+    color: #1e5638;
+    margin-top: 0;
+}
+
+.eco-modal-content button {
+    margin: 10px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#eco-close-btn {
+    background: #36a869;
+    color: white;
+}
+
+#eco-ignore-btn {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}

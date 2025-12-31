@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-eco-50 text-eco-950 antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-eco-600 text-white rounded-lg hover:bg-eco-700 transition-colors shadow-lg shadow-eco-200;
+  }
+  .card {
+    @apply bg-white rounded-xl shadow-xl shadow-eco-100/50 p-6 border border-eco-100;
+  }
+}
