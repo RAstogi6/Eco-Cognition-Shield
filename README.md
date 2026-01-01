@@ -27,7 +27,7 @@ The Chrome extension tracks your actual usage on sites like YouTube and TikTok.
 2.  Enable **Developer mode** (toggle in the top right corner).
 3.  Click **Load unpacked**.
 4.  Select the `extension` folder inside this project directory:
-    `c:/Users/PUNEET RASTOGI/SomeTHING/ECO-COGNITION BY ANTIGRAVITY/extension`
+   
 5.  Visit YouTube or TikTok to see the overlay in action!
 
 ## 🌲 Features
