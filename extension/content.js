@@ -61,18 +61,39 @@ function showIntervention() {
 }
 
 // Initial setup
-createOverlay();
+const isDashboard = window.location.hostname === 'localhost';
 
-// Listen for storage changes to update UI
+if (!isDashboard) {
+    createOverlay();
+}
+
+// Function to broadcast data to the web app
+function broadcastData(data) {
+    if (isDashboard) {
+        window.postMessage({
+            type: 'ECO_UPDATE',
+            payload: data
+        }, '*');
+    }
+}
+
+// Listen for storage changes to update UI and broadcast
 chrome.storage.onChanged.addListener((changes, namespace) => {
-    if (namespace === 'local' && changes.totalCO2) {
-        updateOverlay(changes.totalCO2.newValue);
+    if (namespace === 'local') {
+        // Read full fresh state to ensure consistency
+        chrome.storage.local.get(['totalCO2', 'dailyStats'], (result) => {
+            if (!isDashboard && changes.totalCO2) {
+                updateOverlay(changes.totalCO2.newValue);
+            }
+            broadcastData(result);
+        });
     }
 });
 
 // Initial load
-chrome.storage.local.get(['totalCO2'], (result) => {
-    if (result.totalCO2) {
+chrome.storage.local.get(['totalCO2', 'dailyStats'], (result) => {
+    if (result.totalCO2 && !isDashboard) {
         updateOverlay(result.totalCO2);
     }
+    broadcastData(result);
 });

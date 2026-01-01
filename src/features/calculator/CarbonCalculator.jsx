@@ -6,16 +6,23 @@ const CO2_RATES = {
     streaming: 3.0, // g per minute
 };
 
-export default function CarbonCalculator({ onUpdate }) {
+export default function CarbonCalculator({ onUpdate, externalData }) {
     const [scrollingTime, setScrollingTime] = useState(0);
     const [streamingTime, setStreamingTime] = useState(0);
     const [totalCO2, setTotalCO2] = useState(0);
 
     useEffect(() => {
-        const co2 = (scrollingTime * CO2_RATES.scrolling) + (streamingTime * CO2_RATES.streaming);
-        setTotalCO2(co2);
-        if (onUpdate) onUpdate(co2);
-    }, [scrollingTime, streamingTime, onUpdate]);
+        if (externalData) {
+            setScrollingTime(Math.round(externalData.socialMins || 0));
+            setStreamingTime(Math.round(externalData.videoMins || 0));
+            setTotalCO2(externalData.totalCO2 || 0);
+            if (onUpdate) onUpdate(externalData.totalCO2 || 0);
+        } else {
+            const co2 = (scrollingTime * CO2_RATES.scrolling) + (streamingTime * CO2_RATES.streaming);
+            setTotalCO2(co2);
+            if (onUpdate) onUpdate(co2);
+        }
+    }, [scrollingTime, streamingTime, onUpdate, externalData]);
 
     return (
         <div className="card space-y-6">

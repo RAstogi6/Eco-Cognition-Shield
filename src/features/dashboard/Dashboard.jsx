@@ -9,6 +9,39 @@ export default function Dashboard() {
     const [co2, setCo2] = useState(0);
     const [showMindfulness, setShowMindfulness] = useState(false);
 
+    const [extensionData, setExtensionData] = useState(null);
+
+    useEffect(() => {
+        const handleMessage = (event) => {
+            if (event.data && event.data.type === 'ECO_UPDATE') {
+                const { totalCO2, dailyStats } = event.data.payload;
+
+                // Categorize domains
+                let socialSecs = 0;
+                let videoSecs = 0;
+
+                if (dailyStats) {
+                    Object.entries(dailyStats).forEach(([domain, seconds]) => {
+                        if (domain.includes('youtube') || domain.includes('netflix')) {
+                            videoSecs += seconds;
+                        } else {
+                            socialSecs += seconds;
+                        }
+                    });
+                }
+
+                setExtensionData({
+                    totalCO2,
+                    socialMins: socialSecs / 60,
+                    videoMins: videoSecs / 60
+                });
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, []);
+
     const handleCo2Update = (newCo2) => {
         setCo2(newCo2);
         // Simulation: 5g CO2 = 1% health loss
@@ -49,7 +82,7 @@ export default function Dashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column: Controls */}
                     <div className="lg:col-span-1 space-y-6">
-                        <CarbonCalculator onUpdate={handleCo2Update} />
+                        <CarbonCalculator onUpdate={handleCo2Update} externalData={extensionData} />
 
                         <div className="card bg-gradient-to-br from-eco-600 to-eco-800 text-white border-none">
                             <h3 className="text-lg font-bold mb-2">Did you know?</h3>
