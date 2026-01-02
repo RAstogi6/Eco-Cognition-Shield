@@ -1,9 +1,27 @@
 #eco-cognition-overlay {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
     z-index: 999999;
     font-family: 'Inter', sans-serif;
+}
+
+.eco-pos-top-left {
+    top: 16px;
+    left: 16px;
+}
+
+.eco-pos-top-right {
+    top: 16px;
+    right: 16px;
+}
+
+.eco-pos-bottom-left {
+    bottom: 16px;
+    left: 16px;
+}
+
+.eco-pos-bottom-right {
+    bottom: 16px;
+    right: 16px;
 }
 
 .eco-meter {

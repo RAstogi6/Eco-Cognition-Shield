@@ -14,7 +14,36 @@ function createOverlay() {
     </div>
   `;
     document.body.appendChild(overlay);
+
+    // Load initial settings
+    chrome.storage.local.get(['overlayEnabled', 'position', 'opacity'], (settings) => {
+        applyOverlaySettings(settings);
+    });
+
     return overlay;
+}
+
+function applyOverlaySettings(settings) {
+    const overlay = document.getElementById('eco-cognition-overlay');
+    if (!overlay) return;
+
+    // Defaults
+    const enabled = settings.overlayEnabled !== false; // Default true
+    const pos = settings.position || 'bottom-right';
+    const opacity = settings.opacity !== undefined ? settings.opacity : 0.9;
+
+    // Visibility
+    overlay.style.display = enabled ? 'block' : 'none';
+
+    // Position
+    overlay.classList.remove(
+        'eco-pos-top-left', 'eco-pos-top-right',
+        'eco-pos-bottom-left', 'eco-pos-bottom-right'
+    );
+    overlay.classList.add(`eco-pos-${pos}`);
+
+    // Opacity
+    overlay.style.opacity = opacity;
 }
 
 // Update the overlay with current stats
@@ -81,10 +110,16 @@ function broadcastData(data) {
 chrome.storage.onChanged.addListener((changes, namespace) => {
     if (namespace === 'local') {
         // Read full fresh state to ensure consistency
-        chrome.storage.local.get(['totalCO2', 'dailyStats'], (result) => {
+        chrome.storage.local.get(['totalCO2', 'dailyStats', 'overlayEnabled', 'position', 'opacity'], (result) => {
             if (!isDashboard && changes.totalCO2) {
                 updateOverlay(changes.totalCO2.newValue);
             }
+
+            // Check for settings changes
+            if (changes.overlayEnabled || changes.position || changes.opacity) {
+                applyOverlaySettings(result);
+            }
+
             broadcastData(result);
         });
     }
@@ -97,3 +132,108 @@ chrome.storage.local.get(['totalCO2', 'dailyStats'], (result) => {
     }
     broadcastData(result);
 });
+
+// --- TRACKING LOGIC ---
+
+let pendingDuration = 0;
+let currentQuality = '480p'; // Default
+const REPORT_INTERVAL = 5000; // Report every 5 seconds
+const CHECK_INTERVAL = 1000;  // Check every 1 second
+
+function isVideoPlaying() {
+    const videos = document.querySelectorAll('video');
+    for (const video of videos) {
+        if (!video.paused && !video.ended && video.readyState > 2) {
+            return video; // Return the playing video element
+        }
+    }
+    return null;
+}
+
+function getVideoQuality(video) {
+    if (!video) return '480p';
+    const h = video.videoHeight;
+
+    if (h <= 360) return '360p';
+    if (h <= 480) return '480p';
+    if (h <= 720) return '720p';
+    if (h <= 1080) return '1080p';
+    if (h <= 1440) return '1440p';
+    return '2160p';
+}
+
+let lastVideoTime = 0;
+
+function isVideoActivelyPlaying(video, lastTime) {
+    return (
+        video &&
+        !video.paused &&
+        !video.ended &&
+        video.readyState >= 2 &&
+        video.playbackRate > 0 &&
+        video.currentTime > lastTime
+    );
+}
+
+function trackUsage() {
+    // Check for active playback regardless of tab visibility
+    const video = isVideoPlaying();
+    if (video) {
+        if (isVideoActivelyPlaying(video, lastVideoTime)) {
+            pendingDuration += (CHECK_INTERVAL / 1000);
+            // Update quality based on the active video
+            currentQuality = getVideoQuality(video);
+        }
+        // Always update lastTime to current - ensures we catch progress on next tick
+        lastVideoTime = video.currentTime;
+    }
+}
+
+function reportUsage() {
+    if (pendingDuration <= 0 || !currentQuality) return;
+
+    try {
+        if (
+            typeof chrome === "undefined" ||
+            !chrome.runtime ||
+            !chrome.runtime.sendMessage
+        ) {
+            return;
+        }
+
+        const domain = window.location.hostname.replace('www.', '');
+
+        chrome.runtime.sendMessage({
+            type: "UPDATE_CARBON",
+            payload: {
+                domain: domain,
+                duration: pendingDuration,
+                quality: currentQuality
+            }
+        });
+
+        // Reset ONLY after successful send
+        pendingDuration = 0;
+
+    } catch (e) {
+        // MV3: Extension context invalidated
+        // Ignore and retry next tick
+        return;
+    }
+}
+
+
+// Start tracking loops if not on dashboard
+if (!isDashboard) {
+    setInterval(trackUsage, CHECK_INTERVAL);
+    setInterval(reportUsage, REPORT_INTERVAL);
+
+    // Also report on visibility change or unload to capture trailing data
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            reportUsage();
+        }
+    });
+
+    window.addEventListener('beforeunload', reportUsage);
+}

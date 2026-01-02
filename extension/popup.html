@@ -1,74 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style>
-    body {
-      width: 300px;
-      padding: 16px;
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #f2fcf5;
-      color: #0c271b;
-    }
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #c3eed0;
-    }
-    .title {
-      font-weight: bold;
-      font-size: 16px;
-      color: #1e5638;
-    }
-    .stat-card {
-      background: white;
-      padding: 12px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      margin-bottom: 12px;
-    }
-    .stat-label {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 4px;
-    }
-    .stat-value {
-      font-size: 24px;
-      font-weight: bold;
-      color: #36a869;
-    }
-    .sites-list {
-      font-size: 12px;
-    }
-    .site-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 4px 0;
-      border-bottom: 1px dashed #e5e7eb;
-    }
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 8px;
-      background: #36a869;
-      color: white;
-      text-align: center;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: bold;
-      margin-top: 16px;
-    }
-    .btn:hover {
-      background: #268852;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <div class="header">
-    <span>🌱</span>
+    <span style="font-size: 20px;">🌱</span>
     <span class="title">Eco-Cognition Shield</span>
+    <div class="settings-btn" id="settings-toggle" title="Quick Settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+    </div>
+    
+    <div class="dropdown-menu" id="settings-dropdown">
+        <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <span class="dropdown-label" style="margin-bottom: 0;">Show Overlay</span>
+            <label class="switch">
+                <input type="checkbox" id="quick-toggle" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
+        
+        <div style="margin-bottom: 12px;">
+            <span class="dropdown-label">Overlay Position</span>
+            <select id="quick-position" style="width: 100%; padding: 4px; font-size: 12px; border-radius: 4px; border: 1px solid #ccc;">
+                <option value="top-left">Top Left</option>
+                <option value="top-right">Top Right</option>
+                <option value="bottom-left">Bottom Left</option>
+                <option value="bottom-right">Bottom Right</option>
+            </select>
+        </div>
+        
+        <div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span class="dropdown-label">Opacity</span>
+                <span id="quick-opacity-val" style="font-size: 10px; color: #666;">90%</span>
+            </div>
+            <input type="range" id="quick-opacity" min="0.3" max="1.0" step="0.05" style="width: 100%;">
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-sm btn-link" id="settings-cancel">Cancel</button>
+            <button class="btn-sm btn-primary" id="settings-save">Save</button>
+        </div>
+    </div>
   </div>
 
   <div class="stat-card">
